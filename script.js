@@ -6,6 +6,8 @@ const thickness = document.querySelector("#thickness");
 const myCanvas = document.querySelector("#myCanvas");
 const ctx = myCanvas.getContext("2d");
 let rAF;
+let isDrawing = false;
+
 myCanvas.width = window.innerWidth * 0.8;
 myCanvas.height = window.innerHeight * 0.92;
 
@@ -29,23 +31,48 @@ function thicknessDown(a) {
   }
 }
 
-function draw(eve, thickness, color) {
+function start(eve) {
+  isDrawing = true;
   ctx.beginPath();
-  ctx.arc(eve.offsetX, eve.offsetY, thickness, 0, Math.PI * 2);
-  ctx.fillStyle = color;
-  ctx.fill();
+  ctx.lineTo(eve.offsetX, eve.offsetY);
+  eve.preventDefault();
+}
+
+function end(eve) {
+  if (isDrawing) {
+    ctx.stroke();
+    ctx.closePath();
+    isDrawing = false;
+  }
+  eve.preventDefault();
+}
+
+function draw(eve) {
+  const color = inputColor.value;
+  const t = +thickness.textContent;
+  if (isDrawing) {
+    ctx.lineTo(eve.offsetX, eve.offsetY);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = t;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.stroke();
+  }
+  eve.preventDefault();
 }
 
 function clear() {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
-window.addEventListener("mousedown", (e) => {
-  console.log(e.x, e.y);
-  const color = inputColor.value;
-  const t = +thickness.textContent;
-  draw(e, t, color);
-});
+myCanvas.addEventListener("mousedown", start);
+myCanvas.addEventListener("mousemove", draw);
+myCanvas.addEventListener("mouseup", end);
+// myCanvas.addEventListener("mouseout", end);
+
+myCanvas.addEventListener("touchstart", start);
+myCanvas.addEventListener("touchmove", draw);
+myCanvas.addEventListener("touchend", end);
 
 clearBtn.addEventListener("click", clear);
 plus.addEventListener("click", thicknessUp);
