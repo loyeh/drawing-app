@@ -4,27 +4,23 @@ const minus = document.querySelector("#minus");
 const clearBtn = document.querySelector("#clear");
 const thickness = document.querySelector("#thickness");
 const myCanvas = document.querySelector("#myCanvas");
+
 const ctx = myCanvas.getContext("2d");
-let rAF;
 let isDrawing = false;
 
 myCanvas.width = window.innerWidth * 0.8;
 myCanvas.height = window.innerHeight * 0.92;
 
-console.log(
-  clearBtn,
-  plus,
-  minus,
-  inputColor.value,
-  +thickness.textContent,
-  ctx
-);
+myCanvas.addEventListener("mousedown", start);
+myCanvas.addEventListener("mousemove", draw);
+myCanvas.addEventListener("mouseup", end);
 
 function thicknessUp(a) {
   if (+thickness.textContent < 50) {
     thickness.textContent = +thickness.textContent + 5;
   }
 }
+
 function thicknessDown(a) {
   if (+thickness.textContent > 5) {
     thickness.textContent = +thickness.textContent - 5;
@@ -62,17 +58,8 @@ function draw(eve) {
 }
 
 function clear() {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 }
-
-myCanvas.addEventListener("mousedown", start);
-myCanvas.addEventListener("mousemove", draw);
-myCanvas.addEventListener("mouseup", end);
-// myCanvas.addEventListener("mouseout", end);
-
-myCanvas.addEventListener("touchstart", start);
-myCanvas.addEventListener("touchmove", draw);
-myCanvas.addEventListener("touchend", end);
 
 clearBtn.addEventListener("click", clear);
 plus.addEventListener("click", thicknessUp);
